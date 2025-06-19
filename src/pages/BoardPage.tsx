@@ -1,0 +1,58 @@
+import { useEffect, useState } from "react";
+import useTestGetBoards from "../hooks/test/useTestGetBoards";
+import { useAppDispatch } from "../app/storeHooks";
+import { Board } from "../types/board";
+import moment from "moment/moment";
+
+export default function BoardPage() {
+	console.log("Board");
+	const dispatch = useAppDispatch();
+	const { data: boardsData, isSuccess, isError, isLoading } = useTestGetBoards();
+
+	const [boardList, set_boardList] = useState<Board[]>([]);
+
+	useEffect(() => {
+		if (isLoading) dispatch({ type: "loding/LODING_ON" });
+		else dispatch({ type: "loding/LODING_OFF" });
+		if (isSuccess && boardsData) {
+			console.log(boardsData.boardList);
+			set_boardList(boardsData.boardList);
+		}
+		if (isError) {
+			console.log("오류오류!!");
+		}
+	}, [boardsData, dispatch, isError, isLoading, isSuccess]);
+
+	return (
+		<div id="board">
+			{boardList.length == 0 ? (
+				<p>데이터가 없습니다.</p>
+			) : (
+				<div>
+					<table border={1}>
+						<thead>
+							<tr>
+								<th>No.</th>
+								<th>제목</th>
+								<th>내용</th>
+								<th>작성날짜</th>
+								<th>이름</th>
+							</tr>
+						</thead>
+						<tbody>
+							{boardList.map((board) => (
+								<tr key={"board-" + board.board_id}>
+									<td>{boardList.length - board.board_id + 1}</td>
+									<td>{board.title}</td>
+									<td>{board.content}</td>
+									<td>{moment(board.created_at).format("YYYY MM.DD mm:ss")}</td>
+									<td>{board.name}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			)}
+		</div>
+	);
+}
