@@ -6,7 +6,6 @@ import { getCookie, hasCookie, removeCookie, setCookie } from "../libs/cookie";
 import { useNavigate } from "react-router-dom";
 
 export default function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-	console.log("AuthProvider");
 	const navigate = useNavigate();
 	const [loading, set_loading] = useState<boolean>(true);
 	const [loginOn, set_loginOn] = useState<boolean>(false);
@@ -33,6 +32,7 @@ export default function AuthProvider({ children }: Readonly<{ children: React.Re
 	// AuthProvider.tsx 내부
 	const reissueAccessToken = (): Promise<string> => {
 		const rToken = getCookie("refreshToken");
+		// console.log("reissueAccessToken =>", rToken);
 
 		return new Promise((resolve, reject) => {
 			if (!rToken || isTokenExpired(rToken)) {

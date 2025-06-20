@@ -7,7 +7,6 @@ import BoardPage from "../pages/BoardPage";
 // ✅ 로그인 여부 검사
 const requireAuth = () => {
 	const token = localStorage.getItem("accessToken");
-	console.log(token);
 	if (!token) {
 		// alert("로그인이 필요한 페이지입니다.");
 		return redirect("/?message=need_login"); // 로그인 페이지로 쿼리로 페이지에서 알람 띄워주기

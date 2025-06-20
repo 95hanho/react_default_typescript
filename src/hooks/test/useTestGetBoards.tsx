@@ -13,5 +13,6 @@ export default function useTestGetBoards(): UseQueryResult<GetBoardResponse, Axi
 	return useQuery({
 		queryKey: ["testGetBoards"],
 		queryFn: async () => (await get_normal(API_URL.TEST_BOARD)).data,
+		retry: false, // ❌ 실패 시 자동 재요청 안 함
 	});
 }

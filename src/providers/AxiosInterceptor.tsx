@@ -4,20 +4,25 @@ import { useLocation } from "react-router-dom";
 import { instance } from "../api/instance";
 import useAuth from "../hooks/context/useAuth";
 
+interface RetryableAxiosRequestConfig extends InternalAxiosRequestConfig {
+	_retry?: boolean;
+}
+
 let isRefreshing = false;
 let requestQueue: ((token: string) => void)[] = [];
 const isBearerRequired = false; // Bearer 필요 여부를 조건으로 제어
 
 export default function AxiosInterceptor({ children }: { children: React.ReactNode }) {
-	console.log("AxiosInterceptor");
 	const location = useLocation();
 	const { accessToken, reissueAccessToken } = useAuth();
 
-	const requestFulfill = async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
+	const requestFulfill = async (config: RetryableAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
 		console.log(config.url);
 
-		console.log("accessToken", accessToken);
-		if (accessToken) {
+		if (config?._retry) console.log("재시도 요청"); // undefined | true
+
+		if (!config.headers.Authorization && accessToken) {
+			console.log("accessToken =>", accessToken);
 			config.headers.Authorization = isBearerRequired ? `Bearer ${accessToken}` : accessToken;
 		}
 		return config;
@@ -29,13 +34,12 @@ export default function AxiosInterceptor({ children }: { children: React.ReactNo
 	};
 
 	const responseFulfill = (response: AxiosResponse): AxiosResponse => {
-		console.log("response");
 		return response;
 	};
 
 	const responseReject = async (error: AxiosError): Promise<never> => {
-		console.log(error);
-		const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+		// console.log(error);
+		const originalRequest = error.config as RetryableAxiosRequestConfig;
 		// console.log(originalRequest._retry); // 이게머지??
 
 		// 액세스 토큰 만료 & 재시도 안 한 경우만 처리
@@ -62,7 +66,7 @@ export default function AxiosInterceptor({ children }: { children: React.ReactNo
 			try {
 				const newToken = await reissueAccessToken();
 
-				instance.defaults.headers.Authorization = `Bearer ${newToken}`;
+				instance.defaults.headers.Authorization = isBearerRequired ? `Bearer ${newToken}` : newToken;
 
 				// 대기 중이던 요청들 처리
 				requestQueue.forEach((cb) => cb(newToken));
@@ -70,7 +74,7 @@ export default function AxiosInterceptor({ children }: { children: React.ReactNo
 				isRefreshing = false;
 
 				// 원래 요청 재시도
-				originalRequest.headers.Authorization = `Bearer ${newToken}`;
+				originalRequest.headers.Authorization = isBearerRequired ? `Bearer ${newToken}` : newToken;
 				return instance(originalRequest);
 			} catch (refreshError) {
 				// 재발급 실패 → 대기 중 요청들 모두 실패 처리

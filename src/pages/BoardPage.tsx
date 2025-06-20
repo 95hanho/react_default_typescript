@@ -5,7 +5,6 @@ import { Board } from "../types/board";
 import moment from "moment/moment";
 
 export default function BoardPage() {
-	console.log("Board");
 	const dispatch = useAppDispatch();
 	const { data: boardsData, isSuccess, isError, isLoading } = useTestGetBoards();
 
