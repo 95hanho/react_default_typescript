@@ -1,3 +1,4 @@
+/* 게시판페이지 */
 import { useEffect, useState } from "react";
 import useTestGetBoards from "../hooks/test/useTestGetBoards";
 import { useAppDispatch } from "../app/storeHooks";
@@ -6,21 +7,19 @@ import moment from "moment/moment";
 
 export default function BoardPage() {
 	const dispatch = useAppDispatch();
-	const { data: boardsData, isSuccess, isError, isLoading } = useTestGetBoards();
+	const { data: boardsData, isSuccess, isError, isLoading, isFetched } = useTestGetBoards();
 
 	const [boardList, set_boardList] = useState<Board[]>([]);
 
 	useEffect(() => {
 		if (isLoading) dispatch({ type: "loding/LODING_ON" });
-		else dispatch({ type: "loding/LODING_OFF" });
-		if (isSuccess && boardsData) {
+		else if (isSuccess && boardsData) {
 			console.log(boardsData.boardList);
 			set_boardList(boardsData.boardList);
 		}
-		if (isError) {
-			console.log("오류오류!!");
-		}
-	}, [boardsData, dispatch, isError, isLoading, isSuccess]);
+		if (isError) console.log("오류오류!!");
+		if (isFetched) dispatch({ type: "loding/LODING_OFF" });
+	}, [boardsData, dispatch, isError, isLoading, isSuccess, isFetched]);
 
 	return (
 		<div id="board">

@@ -15,6 +15,7 @@ type ParamValue =
 type Params = Record<string, ParamValue>;
 type Headers = Record<string, string>;
 
+// API패턴 검사
 const getInstance = (url: string) => {
 	if (url.startsWith("/bapi")) {
 		return instance; // Next.js API

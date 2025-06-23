@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { authContext } from "../../contexts/authContext";
 import { AuthContextType } from "../../types/auth";
 
+/* 인증컨텍스트 훅으로 가져오기 */
 export default function useAuth(): AuthContextType {
 	const context = useContext(authContext);
 	if (!context) {

@@ -4,9 +4,12 @@ import { isTokenExpired } from "../libs/auth";
 import { authContext } from "../contexts/authContext";
 import { getCookie, hasCookie, removeCookie, setCookie } from "../libs/cookie";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../app/storeHooks";
 
+/* 인증관련 설정 */
 export default function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 	const [loading, set_loading] = useState<boolean>(true);
 	const [loginOn, set_loginOn] = useState<boolean>(false);
 	const [accessToken, set_accessToken] = useState<string | null>(null);
@@ -17,6 +20,7 @@ export default function AuthProvider({ children }: Readonly<{ children: React.Re
 		// console.log(accessToken);
 	}, [accessToken]);
 
+	// 토큰 세팅
 	const setTokens = (aToken: string, rToken: string) => {
 		console.log("setTokens");
 		set_accessToken(aToken);
@@ -24,12 +28,13 @@ export default function AuthProvider({ children }: Readonly<{ children: React.Re
 		setCookie("refreshToken", rToken, 60 * 10); // 10분
 	};
 
+	// 로그인 시 세팅
 	const loginToken = (aToken: string, rToken: string) => {
 		set_loginOn(true);
 		setTokens(aToken, rToken);
 	};
 
-	// AuthProvider.tsx 내부
+	// 토큰 재발급
 	const reissueAccessToken = (): Promise<string> => {
 		const rToken = getCookie("refreshToken");
 		// console.log("reissueAccessToken =>", rToken);
@@ -37,6 +42,7 @@ export default function AuthProvider({ children }: Readonly<{ children: React.Re
 		return new Promise((resolve, reject) => {
 			if (!rToken || isTokenExpired(rToken)) {
 				logout();
+				navigate("/");
 				reject("Refresh token expired");
 				return;
 			}
@@ -58,14 +64,17 @@ export default function AuthProvider({ children }: Readonly<{ children: React.Re
 		});
 	};
 
+	// 로그아웃
 	const logout = () => {
 		console.log("로그아웃");
+		dispatch({ type: "loding/LODING_OFF" });
 		set_loginOn(false);
 		set_accessToken(null);
 		localStorage.removeItem("accessToken");
 		removeCookie("refreshToken");
 	};
 
+	// 새로고침or처음로드 시 토큰검사
 	useEffect(() => {
 		const aToken = localStorage.getItem("accessToken");
 		if (aToken) set_accessToken(aToken);

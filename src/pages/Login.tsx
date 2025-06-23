@@ -1,3 +1,4 @@
+/* 로그인 페이지 */
 import { useLocation, useNavigate } from "react-router-dom";
 import useTestLogin from "../hooks/test/useTestLogin";
 import { useEffect, useState } from "react";
@@ -15,13 +16,13 @@ export default function Login() {
 	const query = new URLSearchParams(location.search);
 	const message = query.get("message");
 
+	const { loginToken, loginOn, logout } = useAuth();
+	const { mutate: login } = useTestLogin();
+
 	const [user, set_user] = useState<LoginData>({
 		id: "hoseongs",
 		password: "aaaaaa1!",
 	});
-
-	const { loginToken, loginOn, logout } = useAuth();
-	const { mutate: login } = useTestLogin();
 
 	const login_before = (e: React.FormEvent) => {
 		console.log("login_before");
@@ -91,9 +92,10 @@ export default function Login() {
 						/>
 					</div>
 					<div>
-						<input type="submit" value={"로그인"} /> <input type="button" value={"회원가입"} onClick={() => navigate("/user/sign-up")} />{" "}
+						<input type="submit" value={"로그인"} />
+						{/* <input type="button" value={"회원가입"} onClick={() => navigate("/user/sign-up")} />{" "}
 						<input type="button" value={"아이디찾기"} onClick={() => navigate("/user/sign-up")} />{" "}
-						<input type="button" value={"비밀번호찾기"} onClick={() => navigate("/user/sign-up")} />
+						<input type="button" value={"비밀번호찾기"} onClick={() => navigate("/user/sign-up")} /> */}
 					</div>
 				</form>
 			</LoginMain>

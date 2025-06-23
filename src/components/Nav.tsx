@@ -1,3 +1,4 @@
+/* 메뉴바 */
 import { Link, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import useAuth from "../hooks/context/useAuth";
@@ -25,7 +26,6 @@ export default function Nav() {
 						</button>
 					</div>
 					<Link to={"/board"}>board</Link>
-					{/* |<Link to={"/2"}>board</Link>|<Link to={"/3"}>community</Link> */}
 				</>
 			)}
 		</MenuBar>

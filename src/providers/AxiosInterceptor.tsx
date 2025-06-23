@@ -8,14 +8,15 @@ interface RetryableAxiosRequestConfig extends InternalAxiosRequestConfig {
 	_retry?: boolean;
 }
 
-let isRefreshing = false;
-let requestQueue: ((token: string) => void)[] = [];
+let isRefreshing = false; // 재발급 중인지
+let requestQueue: ((token: string) => void)[] = []; // 처리 못 한 요청함수들을 저장
 const isBearerRequired = false; // Bearer 필요 여부를 조건으로 제어
 
 export default function AxiosInterceptor({ children }: { children: React.ReactNode }) {
 	const location = useLocation();
 	const { accessToken, reissueAccessToken } = useAuth();
 
+	// 요청 성공
 	const requestFulfill = async (config: RetryableAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
 		console.log(config.url);
 
@@ -27,16 +28,16 @@ export default function AxiosInterceptor({ children }: { children: React.ReactNo
 		}
 		return config;
 	};
-
+	// 요청 에러
 	const requestReject = (error: AxiosError): Promise<never> => {
 		console.log(error.message + "--->>>" + error.config?.url);
 		return Promise.reject(error);
 	};
-
+	// 응답 성공
 	const responseFulfill = (response: AxiosResponse): AxiosResponse => {
 		return response;
 	};
-
+	// 응답 에러
 	const responseReject = async (error: AxiosError): Promise<never> => {
 		// console.log(error);
 		const originalRequest = error.config as RetryableAxiosRequestConfig;

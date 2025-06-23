@@ -1,3 +1,4 @@
+/* 테스트 게시판 가져오기 */
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { get_normal } from "../../api/apiFilter";
 import { API_URL } from "../../api/endpoints";

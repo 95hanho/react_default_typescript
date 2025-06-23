@@ -3,12 +3,7 @@ import { useEffect } from "react";
 export default function Notice() {
 	console.log("Notice");
 
-	useEffect(() => {
-		// noticeAPI().then(({ data }) => {
-		// 	console.log(data);
-		// });
-		// console.log(data);
-	}, []);
+	useEffect(() => {}, []);
 
 	return (
 		<>
@@ -24,26 +19,7 @@ export default function Notice() {
 							<th>토큰</th>
 						</tr>
 					</thead>
-					<tbody>
-						{/* {noticeList &&
-							noticeList.map(
-								(v: {
-									id: string;
-									nickName: string;
-									password: string;
-									createDate: string;
-									refreshToken: string;
-								}) => (
-									<tr key={"noticeList" + v.id}>
-										<td>{v.id}</td>
-										<td>{v.nickName}</td>
-										<td>{v.password}</td>
-										<td>{v.createDate}</td>
-										<td>{v.refreshToken}</td>
-									</tr>
-								)
-							)} */}
-					</tbody>
+					<tbody></tbody>
 				</table>
 			</div>
 		</>

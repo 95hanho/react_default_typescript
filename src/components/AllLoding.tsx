@@ -1,3 +1,4 @@
+/* 전체로딩 */
 import { useAppSelector } from "../app/storeHooks";
 import styled from "@emotion/styled";
 
